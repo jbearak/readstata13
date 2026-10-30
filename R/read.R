@@ -351,7 +351,7 @@ read.dta13 <- function(file, convert.factors = TRUE, generate.factors=FALSE,
 
   if (replace.strl & version >= 117L) {
     strl <- c("")
-    names(strl) <- "00000000000000000000"
+    names(strl) <- "0_0"
     strl <- c(strl, attr(data,"strl"))
     for (j in seq(ncol(data))[types == sstrl] ) {
       data[, j] <- strl[data[,j]]

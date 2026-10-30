@@ -1273,6 +1273,8 @@ dd <- data.frame( dat = c(paste(replicate(2046, "a"), collapse = ""),
                           paste(replicate(2046, "b"), collapse = ""),
                           "NA", NA_character_),
                   stringsAsFactors = FALSE)
+exp <- dd
+exp$dat[4] <- ""
 
 save.dta13(dd, "data/dta_121.dta", version = 121)
 save.dta13(dd, "data/dta_120.dta", version = 120)
@@ -1287,9 +1289,40 @@ dd118 <- read.dta13("data/dta_118.dta")
 dd117 <- read.dta13("data/dta_117.dta")
 
 test_that("NA character works", {
-  expect_true(datacompare(dd, dd121))
-  expect_true(datacompare(dd, dd120))
-  expect_true(datacompare(dd, dd119))
-  expect_true(datacompare(dd, dd118))
-  expect_true(datacompare(dd, dd117))
+  expect_true(datacompare(exp, dd121))
+  expect_true(datacompare(exp, dd120))
+  expect_true(datacompare(exp, dd119))
+  expect_true(datacompare(exp, dd118))
+  expect_true(datacompare(exp, dd117))
 })
+
+#### empty strl ####
+
+if (readstata13:::dir.exists13("data"))
+  unlink("data", recursive = TRUE)
+dir.create("data")
+
+# an empty strL is stored as the reference (0,0), without a GSO entry
+dd <- data.frame(dat = c(paste(replicate(3000, "a"), collapse = ""), "", "b"),
+                 stringsAsFactors = FALSE)
+
+save.dta13(dd, "data/dta_121.dta", version = 121)
+save.dta13(dd, "data/dta_120.dta", version = 120)
+save.dta13(dd, "data/dta_119.dta", version = 119)
+save.dta13(dd, "data/dta_118.dta", version = 118)
+save.dta13(dd, "data/dta_117.dta", version = 117)
+
+dd121 <- read.dta13("data/dta_121.dta")
+dd120 <- read.dta13("data/dta_120.dta")
+dd119 <- read.dta13("data/dta_119.dta")
+dd118 <- read.dta13("data/dta_118.dta")
+dd117 <- read.dta13("data/dta_117.dta")
+
+test_that("empty strl", {
+  expect_identical(dd121$dat, dd$dat)
+  expect_identical(dd120$dat, dd$dat)
+  expect_identical(dd119$dat, dd$dat)
+  expect_identical(dd118$dat, dd$dat)
+  expect_identical(dd117$dat, dd$dat)
+})
+
